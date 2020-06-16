@@ -3,7 +3,7 @@ import { renderToString } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components'
 import { StaticRouter } from 'react-router-dom'
 import App from '../src/components/App';
-import Html from '../src/Html'
+import Html from './Html'
 
 let assets;
 if (process.env.NODE_ENV === 'development') {
@@ -27,7 +27,14 @@ export default function renderHtml(req, context) {
     </StaticRouter>
   ));
   const styles = sheet.getStyleTags()
-  const title = `SSR React`
+
+  let title;
+  if(req.url === '/') {
+    title = `SSR React - Home`
+  } else {
+    title = `SSR React - About`
+  }
+
 
   return Html({
     body,

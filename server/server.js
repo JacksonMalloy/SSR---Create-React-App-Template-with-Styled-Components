@@ -1,7 +1,5 @@
 import proxy from 'http-proxy-middleware';
 import express from 'express';
-import path from 'path';
-import fs from 'fs'
 import renderHtml from './renderHtml'
 import Routes from './routes'
 
@@ -11,15 +9,7 @@ const context = {}
 
 Routes.forEach(route => {
   app.get(route.url, (req, res) => {
-    const indexFile = path.resolve('./build/index.html')
-
-    fs.readFile(indexFile, 'utf8', (err, data) => {
-      if (err) {
-        console.error(`Houston, we have a problem... `, err)
-        return res.status(500).send('An error occurred')
-      }
-      return res.send(renderHtml(req, context));
-    })
+    return res.send(renderHtml(req, context));
   });
 });
 
