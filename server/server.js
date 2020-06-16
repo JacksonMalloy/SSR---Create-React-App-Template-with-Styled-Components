@@ -1,37 +1,27 @@
 import proxy from 'http-proxy-middleware';
 import express from 'express';
-import path, { resolve } from 'path';
+import path from 'path';
 import fs from 'fs'
+import renderHtml from './renderHtml'
+import Routes from './routes'
 
 const app = express();
 
-// Application
-if (process.env.NODE_ENV === 'development') {
-  app.get('/', (req, res) => {
-    // In development mode we clear the module cache between each request to
-    // get automatic hot reloading.
-    for (var key in require.cache) {
-      delete require.cache[key];
-    }
-    const render = require('./render').default;
-    res.send(render(req.url));
-  });
-} else {
-  const render = require('./render').default
+const context = {}
 
-  app.get('*', (req, res) => {
-    fs.readFile(path.resolve('./build/index.html'), 'utf8', (err, data) => {
+Routes.forEach(route => {
+  app.get(route.url, (req, res) => {
+    const indexFile = path.resolve('./build/index.html')
+
+    fs.readFile(indexFile, 'utf8', (err, data) => {
       if (err) {
-        console.error(err)
+        console.error(`Houston, we have a problem... `, err)
         return res.status(500).send('An error occurred')
       }
-      return res.send(render(req.url));
+      return res.send(renderHtml(req, context));
     })
-  })
-}
-
-// Static resources
-app.use(express.static(resolve(__dirname, '..', 'build')));
+  });
+});
 
 // Proxy everything else to create-react-app's webpack development server
 if (process.env.NODE_ENV === 'development') {
@@ -45,5 +35,5 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.listen(3000, () => {
-  console.log('Listening on port 3000...');
+  console.log('Launched on port 3000...');
 });

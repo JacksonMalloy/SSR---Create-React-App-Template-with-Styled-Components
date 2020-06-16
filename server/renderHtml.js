@@ -16,14 +16,13 @@ if (process.env.NODE_ENV === 'development') {
   assets = require('../build/asset-manifest.json');
 }
 
-export default function render(url) {
-  console.log(`URL: `, url)
+export default function renderHtml(req, context) {
+  console.log(`URL: `, req.url)
 
   const sheet = new ServerStyleSheet()
 
-  const context = {}
   const body = renderToString(sheet.collectStyles(
-    <StaticRouter location={url} context={context}>
+    <StaticRouter location={req.url} context={context}>
       <App assets={assets} />
     </StaticRouter>
   ));
