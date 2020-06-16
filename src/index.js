@@ -1,3 +1,9 @@
+// This file only gets used when proxying the CRA dev server!
+// We add the BrowserRouter here so that we can use Hot Module
+// Reloading on the dev server. In production, we hydrate the
+// <App /> component directly through /server/render.js, thus
+// skipping this component entirely.
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
